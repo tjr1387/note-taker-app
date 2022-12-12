@@ -1,9 +1,8 @@
 const express = require('express');
 const path = require('path');
+const api = require('./routes/index.js');
 
-// also require the 'index.js' file in 'routes'
-
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;      // Heroku seems to want this port number
 
 const app = express();
 
@@ -11,22 +10,27 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// will also want to 'app.use' the routed vbl that was imported up top
+// 'Use' the imported routing middleware
+app.use('/api', api);
 
+// Serve public assets
 app.use(express.static('public'));
 
-// 5 routes total:
 
-// GET '/notes' (wont route this one)
+// Other handlers (not counting the three that have been routed):
 
-// GET '/api/notes' (will be routed)
-// POST '/api/notes' (will be routed)
-// DELETE '/api/notes' (will be routed)
+// GET route for '/notes'
+app.get('/notes', (req, res) =>
+    res.sendFile(path.join(__dirname, '/public/notes.html'))
+);
 
-// GET '*' (index.html) (wont route this one)
+// Wildcard route (which will send user to 'index.html')
+app.get('*', (req, res) =>
+  res.sendFile(path.join(__dirname, 'public/index.html'))
+);
 
 
-// Will want to change this log msg once deployed
+// Listener
 app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${PORT}`)
 );
