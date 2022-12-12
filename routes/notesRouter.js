@@ -9,13 +9,14 @@ router.get('/', (req, res) => {
 });
 
 // DELETE route for one note (by ID)
-router.delete('/:note_id', (req, res) => {
-    const noteId = req.params.note_id;
+router.delete('/:id', (req, res) => {
+    // Grab the specific ID from req.params
+    const noteId = req.params.id;
     readFromFile('./db/db.json')
         .then((data) => JSON.parse(data))
         .then((json) => {
             // The array in db.json without the _one_ that is to be deleted, then overwrite db.json with this new array
-            const dbAfterDelete = json.filter((note) => note.note_id !== noteId);
+            const dbAfterDelete = json.filter((note) => note.id !== noteId);
             writeToFile('./db/db.json', dbAfterDelete);
     
             res.json(`Note with the ID '${noteId}' has been deleted.`);     // may need to change this response
@@ -31,12 +32,12 @@ router.post('/', (req, res) => {
         const newNote = {
             title,
             text,
-            note_id: uniqid(),
+            id: uniqid(),
         };
   
         // Call helper fs util function to modify 'db'
         readAndAppend(newNote, './db/db.json');
-        res.json(newNote);        // this response work?
+        res.json(newNote);
     } else {
         res.error('Error in adding note');
     }
