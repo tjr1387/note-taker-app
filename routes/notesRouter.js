@@ -12,6 +12,24 @@ router.get('/', (req, res) => {
 
 
 // POST route for adding a new note
+router.post('/', (req, res) => {
+    // Destructure title and text of out req.body
+    const { title, text } = req.body;
+  
+    if (req.body) {
+        const newNote = {
+            title,
+            text,
+            note_id: uniqid(),
+        };
+  
+        // Call helper fs util function to modify 'db'
+        readAndAppend(newNote, './db/db.json');
+        res.json(`Note added successfully`);        // may want a different response here
+    } else {
+        res.error('Error in adding note');
+    }
+});
 
 
 module.exports = router;
